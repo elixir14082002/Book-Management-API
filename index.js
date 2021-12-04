@@ -43,13 +43,11 @@ parameter: isbn
 method: get
 */
 
-booky.get("/is/:isbn", (req, res) => {
-  const getSpecificBook= database.books.filter((book) => book.ISBN === req.params.isbn);
+booky.get("/is/:isbn", async (req, res) => {
+  const getSpecificBook= await bookModel.findOne({ISBN: req.params.isbn});
 
-  if(getSpecificBook.length === 0)
-  {
+  if(!getSpecificBook)
     return res.json({error: `no book of isbn as ${req.params.isbn}`});
-  }
 
   return res.json({books: getSpecificBook});
 });
@@ -84,13 +82,13 @@ parameter: language
 method: get
 */
 
-booky.get("/l/:lang", (req, res) => {
- const getSpecificBook= database.books.filter((book) => book.language === req.params.lang);
+booky.get("/l/:lang", async (req, res) => {
+ const getSpecificBook= await bookModel.findOne({language: req.params.lang});
 
- if(getSpecificBook.length === 0)
+ if(!getSpecificBook)
  return res.json( {error: `no book of language ${req.params.lang}`} );
 
- return res.json( {books: getSpecificBook} );
+ return res.json(getSpecificBook);
 });
 
 /*
@@ -101,8 +99,9 @@ parameter: none
 method: get
 */
 
-booky.get("/author", (req,res) => {
-  return res.json({author: database.author});
+booky.get("/author", async (req,res) => {
+  const getAllAuthors= await authorModel.find();
+  return res.json(authorModel);
 });
 
 /*
@@ -131,21 +130,20 @@ booky.get("/author/book/:book", (req,res) => {
 
 /*
 route: /author/
-description: get specific author based on book
+description: get specific author based on id
 access: public
-parameter: book
+parameter: id
 method: get
 */
 
-booky.get("/author/:id", (req,res) => {
+booky.get("/author/:id", async (req,res) => {
 
-  const getSpecificAuthor = database.author.filter((author) =>
-  author.id == req.params.id);
+  const getSpecificAuthor = await authorModel.findOne({id: parseInt(req.params.id)});
 
-  if(getSpecificAuthor.length === 0)
+  if(!getSpecificAuthor)
   return res.json({error: `no author with id ${req.params.id}`});
 
-  return res.json({author: getSpecificAuthor});
+  return res.json(getSpecificAuthor);
   
 });
 
@@ -157,8 +155,9 @@ parameter: none
 method: get
 */
 
-booky.get("/publications/", (req,res)=>{
-  return res.json({publications: database.publication});
+booky.get("/publications/", async (req,res)=>{
+  const getallPub= await publicationModel.find();
+  return res.json(getallPub);
 });
 
 /*
@@ -169,15 +168,13 @@ parameter: id
 method: get
 */
 
-booky.get("/publications/:id", (req,res) => {
-  const getAllPub= database.publication.filter((pub) => 
-    pub.id == req.params.id
-  );
+booky.get("/publications/:id", async (req,res) => {
+  const getSpecificPub= await publicationModel.findOne({id: parseInt(req.params.id)});
 
-  if(getAllPub.length === 0)
+  if(!getSpecificPub)
   return res.json({error: `no publication with id as ${req.params.id}`});
 
-  return res.json({publication: getAllPub});
+  return res.json(getSpecificPub);
 });
 
 /*
