@@ -229,4 +229,34 @@ booky.post("/publications/new", async (req,res) => {
   return res.json({Publications: addNewPub, message: "Publication is added"});
 });
 
+/*
+route: /publications/update/book
+description: update publication and book
+access: public
+parameter: isbn
+method: put
+*/
+
+booky.put("/publications/update/book/:isbn", (req,res)=>{
+  //UPDATE THE PUBLICATION
+  database.publication.forEach((values)=>{
+    if(values.id === req.body.id)
+    return values.books.push(req.params.isbn);
+  });
+
+  //UPDATE THE BOOK
+  database.books.forEach((values)=>{
+    if(values.ISBN == req.params.isbn)
+    values.publications= req.body.id; 
+    return;
+  });
+
+  //DISPLAYING THE MESSAGE
+  return res.json(
+    {books: database.books ,
+    publications: database.publication,
+    message: "Successfully done"}
+  );
+});
+
 booky.listen(3000, ()=> console.log("Server is up and running"));
