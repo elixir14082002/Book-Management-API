@@ -3,6 +3,11 @@ const express= require("express"); // requiring the express
 const mongoose= require("mongoose");
 const database= require("./database"); // requiring the database
 
+//model
+const bookModel= require("./database/book");
+const authorModel= require("./database/author");
+const publicationModel= require("./database/publication");
+
 const bodyParser= require("body-parser"); // requiring the body parser
 
 const booky= express();
@@ -25,8 +30,9 @@ parameter: none
 method: get
 */
 
-booky.get("/", (req,res)=> {
-  return res.json( {books: database.books} );
+booky.get("/", async (req,res)=> {
+  const getAllBooks= await bookModel.find();
+  return res.json(getAllBooks);
 });
 
 /*
