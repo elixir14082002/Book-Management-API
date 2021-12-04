@@ -210,9 +210,9 @@ method: post
 */
 
 booky.post("/authors/new", async (req,res) => {
-  const {newAuthor}= req.body;
+  const {newAuthor} = req.body;
   const addNewAuthor= authorModel.create(newAuthor);
-  return res.json({Author: addNewAuthor, message: "author is added"});
+  return res.json({Authors: addNewAuthor, message: "Author was added"});
 });
 
 /*
@@ -224,10 +224,9 @@ method: post
 */
 
 booky.post("/publications/new", async (req,res) => {
-  const {newpub}= req.body;
-  const addNewPub= publicationModel.create(newpub);
+  const {newPub}= req.body;
+  const addNewPub= publicationModel.create(newPub);
   return res.json({Publications: addNewPub, message: "Publication is added"});
 });
-
 
 booky.listen(3000, ()=> console.log("Server is up and running"));
