@@ -184,7 +184,7 @@ booky.get("/publications/books/:books", async (req,res) => {
     if(!getSpecificPub)
       return res.json({error: `no publication of book as ${req.params.books}`});
   
-    return res.json({books: getSpecificPub});
+    return res.json(getSpecificPub);
 });
 
 /*
