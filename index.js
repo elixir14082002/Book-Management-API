@@ -195,10 +195,10 @@ parameter: none
 method: post
 */
 
-booky.post("/books/new", (req,res) => {
-  const newBook= req.body;
-  database.books.push(newBook);
-  return res.json({updatedBooks: database.books});
+booky.post("/books/new", async (req,res) => {
+  const {newBook} = req.body;
+  const addNewBook= bookModel.create(newBook);
+  return res.json({Books: addNewBook, message: "Book was added"});
 });
 
 /*
@@ -209,24 +209,24 @@ parameter: none
 method: post
 */
 
-booky.post("/authors/new", (req,res) => {
-  const newAuthor= req.body;
-  database.author.push(newAuthor);
-  return res.json({updatedAuthor: database.author});
+booky.post("/authors/new", async (req,res) => {
+  const {newAuthor}= req.body;
+  const addNewAuthor= authorModel.create(newAuthor);
+  return res.json({Author: addNewAuthor, message: "author is added"});
 });
 
 /*
 route: /publications/new
-description: add new authors
+description: add new publications
 access: public
 parameter: none
 method: post
 */
 
-booky.post("/publications/new", (req,res) => {
-  const newpub= req.body;
-  database.publication.push(newpub);
-  return res.json({updatedPublications: database.publication});
+booky.post("/publications/new", async (req,res) => {
+  const {newpub}= req.body;
+  const addNewPub= publicationModel.create(newpub);
+  return res.json({Publications: addNewPub, message: "Publication is added"});
 });
 
 
