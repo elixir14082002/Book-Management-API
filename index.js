@@ -274,4 +274,35 @@ booky.delete("/book/delete/:isbn", (req,res) => {
   return res.json({books: database.books});
 });
 
+/*
+route: /book/delete/author
+description: delete a book
+access: public
+parameter: isbn, authorId
+method: delete
+*/
+
+booky.delete("/book/delete/author/:isbn/:authorId", (req, res) => {
+  database.books.forEach((values) =>{
+    if(values.ISBN == req.params.isbn)
+    {
+      const updatedAuthor= values.author.filter((id)=> id != req.params.authorId);
+      values.author= updatedAuthor;
+      return;
+    }
+  });
+
+  database.author.forEach((values)=>{
+    if(values.id == req.params.authorId)
+    {
+      const updatedBook= values.books.filter((book)=> book != req.params.isbn);
+      values.books= updatedBook;
+      return;
+    }
+  });
+
+  return res.json({books: database.books, authors: database.author});
+
+})
+
 booky.listen(3000, ()=> console.log("Server is up and running"));
