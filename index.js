@@ -261,24 +261,50 @@ parameter: isbn
 method: put
 */
 
-booky.put("/publications/update/book/:isbn", (req,res)=>{
+booky.put("/publications/update/book/:isbn", async (req,res)=>{
   //UPDATE THE PUBLICATION
-  database.publication.forEach((values)=>{
-    if(values.id === req.body.id)
-    return values.books.push(req.params.isbn);
-  });
+  // database.publication.forEach((values)=>{
+  //   if(values.id === req.body.id)
+  //   return values.books.push(req.params.isbn);
+  // });
+  const updatePub= await publicationModel.findOneAndUpdate(
+    {
+      id: parseInt(req.body.id)
+    },
+    {
+      $push:{
+        books: req.params.isbn
+      }
+    },
+    {
+      new: true
+    }
+  );
+
 
   //UPDATE THE BOOK
-  database.books.forEach((values)=>{
-    if(values.ISBN == req.params.isbn)
-    values.publications= req.body.id; 
-    return;
-  });
+  // database.books.forEach((values)=>{
+  //   if(values.ISBN == req.params.isbn)
+  //   values.publications= req.body.id; 
+  //   return;
+  // });
+
+  const updateBook= await bookModel.findOneAndUpdate(
+    {
+      ISBN: req.params.isbn
+    },
+    {
+      publications: req.body.id
+    },
+    {
+      new: true
+    }
+  );
 
   //DISPLAYING THE MESSAGE
   return res.json(
-    {books: database.books ,
-    publications: database.publication,
+    {books: updatePub ,
+    publications: updateBook,
     message: "Successfully done"}
   );
 });
@@ -312,26 +338,56 @@ parameter: isbn, authorId
 method: delete
 */
 
-booky.delete("/book/delete/author/:isbn/:authorId", (req, res) => {
-  database.books.forEach((values) =>{
-    if(values.ISBN == req.params.isbn)
-    {
-      const updatedAuthor= values.author.filter((id)=> id != req.params.authorId);
-      values.author= updatedAuthor;
-      return;
-    }
-  });
+booky.delete("/book/delete/author/:isbn/:authorId", async (req, res) => {
 
-  database.author.forEach((values)=>{
-    if(values.id == req.params.authorId)
+  // UPDATE THE BOOK
+  // database.books.forEach((values) =>{
+  //   if(values.ISBN == req.params.isbn)
+  //   {
+  //     const updatedAuthor= values.author.filter((id)=> id != req.params.authorId);
+  //     values.author= updatedAuthor;
+  //     return;
+  //   }
+  // });
+  const updateBook= await bookModel.findOneAndUpdate(
     {
-      const updatedBook= values.books.filter((book)=> book != req.params.isbn);
-      values.books= updatedBook;
-      return;
+      ISBN: req.params.isbn
+    },
+    {
+      $pull :{
+        author: parseInt(req.params.authorId) 
+      }
+    },
+    {
+      new: true
     }
-  });
+  );
 
-  return res.json({books: database.books, authors: database.author});
+  // UPDATE THE AUTHOR
+  // database.author.forEach((values)=>{
+  //   if(values.id == req.params.authorId)
+  //   {
+  //     const updatedBook= values.books.filter((book)=> book != req.params.isbn);
+  //     values.books= updatedBook;
+  //     return;
+  //   }
+  // });
+
+  const updateAuthor= await authorModel.findOneAndUpdate(
+    {
+      id: parseInt(req.params.authorId)
+    },
+    {
+        $pull: {
+          books: req.params.isbn
+        }
+    },
+    {
+      new: true
+    }
+  );
+
+  return res.json({books: updateBook, authors: updateAuthor});
 
 })
 
