@@ -230,6 +230,30 @@ booky.post("/publications/new", async (req,res) => {
 });
 
 /*
+route: /books/update
+description: update publication and bookbook title
+parameter: isbn
+method: put
+*/
+
+booky.put("/books/update/:isbn", async (req,res) => {
+  const updatedBook= await bookModel.findOneAndUpdate(
+    {
+      ISBN: req.params.isbn
+    },
+    {
+      title: req.body.bookTitle
+    },
+    {
+      new: true
+    }
+  );
+
+    return res.json({books: database.books});
+
+});
+
+/*
 route: /publications/update/book
 description: update publication and book
 access: public
@@ -267,11 +291,17 @@ parameter: isbn
 method: delete
 */
 
-booky.delete("/book/delete/:isbn", (req,res) => {
-  const updateBookDatabase= database.books.filter((values)=> values.ISBN != req.params.isbn);
-  database.books= updateBookDatabase;
+// booky.delete("/book/delete/:isbn", (req,res) => {
+//   const updateBookDatabase= database.books.filter((values)=> values.ISBN != req.params.isbn);
+//   database.books= updateBookDatabase;
 
-  return res.json({books: database.books});
+//   return res.json({books: database.books});
+// });
+
+booky.delete("/book/delete/:isbn", async (req,res) =>{
+  const deleteBook= await bookModel.findOneAndDelete({ISBN: req.params.isbn});
+
+  return res.json({books: deleteBook});
 });
 
 /*
